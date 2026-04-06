@@ -21,8 +21,28 @@ const suggestions = [
     "Recommend a movie for me to watch."
 ]
 
-const SuggestedPrompts = ({ disabled, handleSubmit }: { disabled: boolean, handleSubmit: (prompt: string) => void }) => {
+const SuggestedPrompts = ({
+    disabled,
+    isMobile,
+    handleSubmit
+}: {
+    disabled: boolean
+    isMobile: boolean
+    handleSubmit: (prompt: string) => void
+}) => {
     const { theme } = useTheme()
+    const [activeSuggestion, setActiveSuggestion] = useState<number | null>(null)
+
+    const handleSuggestionClick = (suggestion: string, index: number) => {
+        if (disabled) return
+
+        if (isMobile) {
+            setActiveSuggestion(index)
+            window.setTimeout(() => setActiveSuggestion(null), 800)
+        }
+
+        handleSubmit(suggestion)
+    }
     
     return (
         <div className='md:flex gap-2 grid grid-cols-2'>
@@ -32,7 +52,7 @@ const SuggestedPrompts = ({ disabled, handleSubmit }: { disabled: boolean, handl
                         <div 
                             key={`prompt_${i}`}
                             className={`${theme === "light" ? 'bg-white border-[#7F7F7F20]' : 'bg-[#1F1F1F] border-[#3A3A3A]'} border rounded-lg md:w-50 h-30 p-3 text-[14px] flex flex-col justify-between ${!disabled && 'cursor-pointer'}`}
-                            onClick={() => handleSubmit(suggestion)}
+                            onClick={() => handleSuggestionClick(suggestion, i)}
                         >
                             <Sparkles 
                                 size={36} 
@@ -42,7 +62,7 @@ const SuggestedPrompts = ({ disabled, handleSubmit }: { disabled: boolean, handl
                             {suggestion}
                         </div>
                         <div
-                            className="absolute top-1/2 left-1/2 w-[200%] h-[200%] animate-spin-slow opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                            className={`absolute top-1/2 left-1/2 w-[200%] h-[200%] animate-spin-slow opacity-0 transition-opacity duration-300 pointer-events-none ${isMobile ? activeSuggestion === i ? 'opacity-100' : '' : 'group-hover:opacity-100'}`}
                             style={{ background: "conic-gradient(transparent, #C58EFF, #709DFF, transparent)", zIndex: -1 }}
                         ></div>
                     </div>
@@ -109,6 +129,7 @@ const NewChat = () => {
                 <div className={`${className} w-full md:w-fit items-start gap-4`}>
                     <SuggestedPrompts 
                         disabled={isLoading}
+                        isMobile={isMobile}
                         handleSubmit={handleSubmit}
                     />
                     <PromptBar 

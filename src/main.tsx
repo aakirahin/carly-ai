@@ -25,7 +25,7 @@ function AppLayout() {
           aria-label="Toggle sidebar"
         />
         <AppSidebar />
-        <main className="flex flex-1 justify-center text-[14px] w-full">
+        <main className="flex flex-1 justify-center lg:text-[14px] text-[16px] w-full">
           <RouterProvider router={router} />
         </main>
       </div>

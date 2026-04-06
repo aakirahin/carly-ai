@@ -100,7 +100,7 @@ const NewChat = () => {
     return (
         <div className={`${className} gap-10 md:justify-center justify-end m-4`}>
             <Carly cursorPos={cursorPos}/>
-            <div className={`${className} gap-8 justify-between h-80`}>
+            <div className={`${className} gap-8 justify-between h-60`}>
                 <h1 className='text-4xl font-medium text-center'>What can I help you with?</h1>
                 <div className={`${className} w-full md:w-fit items-start gap-4`}>
                     {

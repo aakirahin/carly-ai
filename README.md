@@ -1,75 +1,79 @@
-# React + TypeScript + Vite
+# Carly AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight chat UI built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+`carly-ai` provides a clean, local-first chat experience with a persistent sidebar, prompt suggestions, and OpenRouter-backed responses.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Create new chats from custom prompts or quick suggestions.
+- Continue existing conversations at `/chat/:chatId`.
+- Persist chats in browser local storage.
+- Search chats in the sidebar.
+- Rename, favourite, and delete chats from a context menu.
+- Responsive layout with mobile-aware sidebar behavior.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Tech Stack
 
-Note: This will impact Vite dev & build performances.
+- React
+- TypeScript
+- Vite
+- React Router
+- Tailwind CSS
+- Shadcn
+- OpenRouter Chat Completions API
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. Install dependencies:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Create or update `.env.local` in the project root:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_API_KEY=your_openrouter_api_key_here
 ```
+
+3. Save the file.
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+5. Open the app at the local URL shown in the terminal (typically `http://localhost:5173`).
+
+## Environment Variables
+
+- `VITE_API_KEY`: Required. Used in `src/lib/chat.ts` to authorize requests to `https://openrouter.ai/api/v1/chat/completions`.
+
+## Available Scripts
+
+- `npm run dev`: Start Vite development server.
+- `npm run build`: Type-check and build production assets.
+- `npm run preview`: Preview the production build locally.
+- `npm run lint`: Run ESLint.
+
+## Project Structure
+
+```text
+src/
+  components/      # UI components (sidebar, messages, prompt bar, Carly avatar)
+  hooks/           # Reusable hooks (mobile detection, debounce)
+  lib/             # API integration (OpenRouter chat calls)
+  pages/           # Route pages (new chat, chat, 404)
+  utils/           # localStorage utilities, shared types, helpers
+```
+
+## How Data Is Stored
+
+Chats are stored in browser local storage and synchronized in the sidebar using custom and browser storage events. No backend database is required for chat history.
+
+## Notes
+
+- The app currently uses the `openrouter/free` model identifier.
+- Keep your API key private and do not commit `.env` files.

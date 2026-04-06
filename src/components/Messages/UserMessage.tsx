@@ -9,7 +9,7 @@ const UserMessage = ({
 }: Props) => {
   return (
     <div className='flex justify-end'>
-        <p className='px-3 py-2 bg-[#7F7F7F25] rounded-lg w-fit'>
+        <p className='px-3 py-2 bg-[#7F7F7F10] rounded-lg w-fit'>
             {content}
         </p>
     </div>

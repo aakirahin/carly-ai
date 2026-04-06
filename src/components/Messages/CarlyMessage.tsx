@@ -15,7 +15,7 @@ const CarlyMessage = ({
                 height="40" 
                 width="40"
             />
-            <p className='px-3 py-2 bg-[#7F7F7F10] rounded-lg w-fit h-fit'>
+            <p className='px-3 py-2 bg-[#7F7F7F08] rounded-lg w-fit h-fit'>
                 {content}
             </p>
         </div>

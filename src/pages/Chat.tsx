@@ -7,10 +7,12 @@ import { BotMessageSquare } from 'lucide-react'
 import { getItem, setItem } from '../utils/localStorage'
 import type { Chat, Message } from '../utils/type'
 import { getResponse } from '../lib/chat'
+import { useIsMobile } from '../hooks/use-mobile'
 
 const Chat = () => {
     const { chatId } = useParams()
     const chat: Chat = getItem(chatId)
+    const isMobile = useIsMobile()
 
     const [prompt, setPrompt] = useState<string>("")
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -48,7 +50,7 @@ const Chat = () => {
     }
 
     return (
-        <div className='flex flex-col m-4 justify-end w-full gap-4'>
+        <div className='flex flex-col m-4 justify-end w-full md:gap-4 gap-6'>
             {
                 chat.messages.map((msg: Message) => {
                     if (msg.role === "user") return <UserMessage content={msg.content}/>
@@ -56,7 +58,7 @@ const Chat = () => {
                 })
             }
             {
-                isLoading &&
+                !isMobile && isLoading &&
                 <span className='flex items-center gap-1.5 mt-0 m-2'>
                     <BotMessageSquare size={16} color='#7F7F7F80'/>
                     <p className='animate-pulse'>

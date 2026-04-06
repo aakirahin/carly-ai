@@ -4,7 +4,8 @@ import {
   Pencil, 
   Search, 
   Star, 
-  Trash2 
+  Trash2,
+  X 
 } from "lucide-react";
 import { 
   Sidebar, 
@@ -17,7 +18,8 @@ import {
   SidebarMenu, 
   SidebarMenuAction, 
   SidebarMenuButton, 
-  SidebarMenuItem, 
+  SidebarMenuItem,
+  useSidebar,
 } from "./ui/sidebar";
 import {
   DropdownMenu,
@@ -121,6 +123,7 @@ const MenuItemActions = ({
 )
 
 const Header = ({ search, setSearch }: { search: string, setSearch: (search: string) => void }) => {
+  const { toggleSidebar } = useSidebar()
   const mainNav = [
     { 
       title: "New chat", 
@@ -138,7 +141,13 @@ const Header = ({ search, setSearch }: { search: string, setSearch: (search: str
           height="40" 
           width="120"
         />
-        {/* <SidebarTrigger className="p-3" /> */}
+        <button
+          onClick={toggleSidebar}
+          className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          aria-label="Close sidebar"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
       <SidebarSearch search={search} setSearch={setSearch}/>
       <SidebarMenu>

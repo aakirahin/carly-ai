@@ -14,7 +14,7 @@ const PromptBar = ({
   handleSubmit,
 }: Props) => {
   return (
-    <div className='flex border border-[#7F7F7F20] rounded-full p-2 items-center w-full'>
+    <div className='flex border border-[#7F7F7F20] rounded-full p-2 items-center w-full bg-white'>
       <input 
         type='text' 
         placeholder='Ask me anything...' 

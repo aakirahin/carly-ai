@@ -1,3 +1,4 @@
+import { useTheme } from '../theme-provider'
 import SparkleButton from './SparkleButton'
 
 type Props = {
@@ -13,8 +14,10 @@ const PromptBar = ({
   isLoading,
   handleSubmit,
 }: Props) => {
+  const { theme } = useTheme()
+
   return (
-    <div className='flex border border-[#7F7F7F20] rounded-full p-2 items-center w-full bg-white'>
+    <div className={`flex border rounded-full p-2 items-center w-full ${theme === "light" ? 'bg-white border-[#7F7F7F20]' : 'bg-[#1F1F1F] border-[#3A3A3A]'}`}>
       <input 
         type='text' 
         placeholder='Ask me anything...' 

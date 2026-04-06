@@ -29,10 +29,13 @@ import {
 } from "./ui/dropdown-menu"
 import { Label } from "./ui/label";
 import carlyLogo from "../assets/logo.svg"
+import carlyDarkLogo from "../assets/logo_dark.svg"
 import { useDebounce, useIsMobile } from "../hooks/use-mobile";
 import { getItem, removeItem, setItem, STORAGE_UPDATED_EVENT } from "../utils/localStorage";
 import { useEffect, useState } from "react";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./ui/input-group";
+import { ModeToggle } from "./mode-toggle";
+import { useTheme } from "./theme-provider";
 
 type NavItem = {
   id: string
@@ -122,7 +125,8 @@ const MenuItemActions = ({
 )
 
 const Header = ({ search, setSearch }: { search: string, setSearch: (search: string) => void }) => {
-  const { toggleSidebar } = useSidebar()
+  const { theme } = useTheme()
+
   const mainNav = [
     { 
       title: "New chat", 
@@ -135,18 +139,12 @@ const Header = ({ search, setSearch }: { search: string, setSearch: (search: str
     <SidebarHeader>
       <div className="flex justify-between items-center m-2 mb-4">
         <img 
-          src={carlyLogo} 
+          src={theme === "light" ? carlyLogo : carlyDarkLogo} 
           alt="Carly AI" 
           height="40" 
           width="120"
         />
-        <button
-          onClick={toggleSidebar}
-          className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Close sidebar"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        <ModeToggle/>
       </div>
       <SidebarSearch search={search} setSearch={setSearch}/>
       <SidebarMenu>

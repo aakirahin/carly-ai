@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { setItem } from '../utils/localStorage';
 import { startConversation } from '../lib/chat';
 import { useIsMobile } from '../hooks/use-mobile';
+import { useTheme } from '../components/theme-provider';
 
 const className = "flex flex-col items-center"
 
@@ -16,24 +17,27 @@ const generateId = () => {
 const suggestions = [
     "How many r's are there in 'strawberry'?",
     "What's the weather like today?",
-    "Give me a healthy recipe to cook for dinner tonight."
+    "Give me a healthy recipe to cook.",
+    "Recommend a movie for me to watch."
 ]
 
 const SuggestedPrompts = ({ disabled, handleSubmit }: { disabled: boolean, handleSubmit: (prompt: string) => void }) => {
+    const { theme } = useTheme()
+    
     return (
-        <div className='flex gap-2'>
+        <div className='md:flex gap-2 grid grid-cols-2'>
             {
                 suggestions.map((suggestion, i) => (
-                    <div className='group relative p-[1px] overflow-hidden rounded-lg'>
+                    <div className='group relative p-[1px] rounded-lg'>
                         <div 
                             key={`prompt_${i}`}
-                            className={`bg-white border border-[#7F7F7F20] rounded-lg w-50 h-40 p-3 text-[14px] flex flex-col justify-between ${!disabled && 'cursor-pointer'}`}
+                            className={`${theme === "light" ? 'bg-white border-[#7F7F7F20]' : 'bg-[#1F1F1F] border-[#3A3A3A]'} border rounded-lg md:w-50 h-30 p-3 text-[14px] flex flex-col justify-between ${!disabled && 'cursor-pointer'}`}
                             onClick={() => handleSubmit(suggestion)}
                         >
                             <Sparkles 
                                 size={36} 
                                 color={"#C5B4FA"} 
-                                className='p-2 border border-[#7F7F7F20] rounded-full'
+                                className={`p-2 border ${theme === "light" ? 'border-[#7F7F7F20]' : 'border-[#3A3A3A]' } rounded-full`}
                             />
                             {suggestion}
                         </div>
@@ -98,18 +102,15 @@ const NewChat = () => {
     }, []);
 
     return (
-        <div className={`${className} gap-10 md:justify-center justify-end m-4`}>
+        <div className={`${className} gap-10 md:justify-center justify-end m-4 overflow-hidden`}>
             <Carly cursorPos={cursorPos}/>
-            <div className={`${className} gap-8 justify-between h-60`}>
+            <div className={`${className} gap-8`}>
                 <h1 className='text-4xl font-medium text-center'>What can I help you with?</h1>
                 <div className={`${className} w-full md:w-fit items-start gap-4`}>
-                    {
-                        !isMobile &&
-                        <SuggestedPrompts 
-                            disabled={isLoading}
-                            handleSubmit={handleSubmit}
-                        />
-                    }
+                    <SuggestedPrompts 
+                        disabled={isLoading}
+                        handleSubmit={handleSubmit}
+                    />
                     <PromptBar 
                         prompt={prompt}
                         setPrompt={setPrompt}

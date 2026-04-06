@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Body from './Body'
 import Face from './Face'
+import { useTheme } from '../theme-provider'
 
 type Props = {
     cursorPos: { x: number, y: number }
@@ -12,6 +13,7 @@ const Carly = ({
     const characterRef = useRef<HTMLDivElement>(null);
     const [eyePositions, setEyePositions] = useState({ leftEyeX: 10, rightEyeX: 74, eyeY: 10 });
     const [backgroundOffset, setBackgroundOffset] = useState({ offsetX: 0, offsetY: 0 });
+    const { theme } = useTheme()
 
     useEffect(() => {
         if (!characterRef.current) return;
@@ -52,43 +54,14 @@ const Carly = ({
             <div className="absolute inset-[6.03%_7.09%_16.67%_7.09%] overflow-visible">
                 <div className="absolute inset-[-13.76%] overflow-visible">
                     <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 278 278">
-                        <defs>
-                            <filter id="whiteGlow" x="-50%" y="-50%" width="200%" height="200%">
-                                <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
-                                <feOffset dx="0" dy="0" result="offsetblur"/>
-                                <feFlood floodColor="white" floodOpacity="0.6"/>
-                                <feComposite in2="offsetblur" operator="in"/>
-                                <feMerge>
-                                    <feMergeNode/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        <g filter="url(#filter0_di_1_494) url(#whiteGlow)" id="Ellipse 5">
-                            <circle cx="139" cy="139" fill="var(--fill-0, white)" r="109" />
+                        <g filter="url(#filter0_di_1_494)" id="Ellipse 5">
+                            <circle cx="139" cy="139" fill={`var(--fill-0, ${theme === "light" ? "#FCFCFC" : "#1F1F1F"})`} r="109" />
                             <circle cx="139" cy="139" r="108.5" stroke="url(#paint0_linear_1_494)" />
                         </g>
                         <defs>
-                            <filter colorInterpolationFilters="sRGB" filterUnits="userSpaceOnUse" height="278" id="filter0_di_1_494" width="278" x="0" y="0">
-                                <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                                <feColorMatrix in="SourceAlpha" result="hardAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
-                                <feMorphology in="SourceAlpha" operator="dilate" radius="10" result="effect1_dropShadow_1_494" />
-                                <feOffset />
-                                <feGaussianBlur stdDeviation="10" />
-                                <feComposite in2="hardAlpha" operator="out" />
-                                <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" />
-                                <feBlend in2="BackgroundImageFix" mode="normal" result="effect1_dropShadow_1_494" />
-                                <feBlend in="SourceGraphic" in2="effect1_dropShadow_1_494" mode="normal" result="shape" />
-                                <feColorMatrix in="SourceAlpha" result="hardAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
-                                <feOffset />
-                                <feGaussianBlur stdDeviation="20" />
-                                <feComposite in2="hardAlpha" k2="-1" k3="1" operator="arithmetic" />
-                                <feColorMatrix type="matrix" values="0 0 0 0 0.923177 0 0 0 0 0.884766 0 0 0 0 1 0 0 0 0.5 0" />
-                                <feBlend in2="shape" mode="normal" result="effect2_innerShadow_1_494" />
-                            </filter>
                             <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_1_494" x1="139" x2="139" y1="30" y2="248">
                                 <stop stopColor="#C7ACFF" stopOpacity="0.25" />
-                                <stop offset="1" stopColor="#C7E6FF" stopOpacity="0.25" />
+                                <stop offset="1" stopColor="#56B3FF" stopOpacity="0.25" />
                             </linearGradient>
                         </defs>
                     </svg>
@@ -107,7 +80,7 @@ const Carly = ({
                                 <feGaussianBlur result="effect1_foregroundBlur_1_488" stdDeviation="25" />
                             </filter>
                             <radialGradient cx="0" cy="0" gradientTransform="matrix(80 -1.40039e-06 -0.0432524 14.5456 143.5 67)" gradientUnits="userSpaceOnUse" id="paint0_radial_1_488" r="1">
-                                <stop stopColor="#A071FF" />
+                                <stop stopColor="#BB6EFF" />
                                 <stop offset="1" stopColor="#C2CCFF" stopOpacity="0.75" />
                             </radialGradient>
                         </defs>

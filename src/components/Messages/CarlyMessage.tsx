@@ -1,6 +1,5 @@
 import carly from '../../assets/carly.svg'
 import carlyDark from '../../assets/carly_dark.svg'
-import { useIsMobile } from '../../hooks/use-mobile'
 import { useTheme } from '../theme-provider'
 
 type Props = {
@@ -11,7 +10,6 @@ const CarlyMessage = ({
     content
 }: Props) => {
     const { theme } = useTheme()
-    const isMobile = useIsMobile()
 
     return (
         <div className='flex gap-2 items-end'>

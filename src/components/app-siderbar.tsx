@@ -5,7 +5,6 @@ import {
   Search, 
   Star, 
   Trash2,
-  X 
 } from "lucide-react";
 import { 
   Sidebar, 
@@ -19,7 +18,6 @@ import {
   SidebarMenuAction, 
   SidebarMenuButton, 
   SidebarMenuItem,
-  useSidebar,
 } from "./ui/sidebar";
 import {
   DropdownMenu,

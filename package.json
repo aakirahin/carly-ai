@@ -1,16 +1,13 @@
 {
   "name": "carly-ai",
-  "homepage": "https://aakirahin.github.io/carly-ai/",
-  "private": false,
+  "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@fontsource-variable/figtree": "^5.2.10",

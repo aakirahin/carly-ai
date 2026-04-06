@@ -8,11 +8,14 @@ import NotFound from './pages/NotFound.tsx'
 import Chat from './pages/Chat.tsx'
 import './index.css'
 
-const router = createBrowserRouter([
-  { path: "/", element: <NewChat/> },
-  { path: "/chat/:chatId", element: <Chat/> },
-  { path: "*", element: <NotFound/> }
-])
+const router = createBrowserRouter(
+  [
+    { path: "/", element: <NewChat/> },
+    { path: "/chat/:chatId", element: <Chat/> },
+    { path: "*", element: <NotFound/> }
+  ],
+  { basename: '/carly-ai/' }
+)
 
 function AppLayout() {
   const defaultOpen = window.innerWidth >= 1024

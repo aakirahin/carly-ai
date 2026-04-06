@@ -28,7 +28,7 @@ const SuggestedPrompts = ({ disabled, handleSubmit }: { disabled: boolean, handl
         <div className='md:flex gap-2 grid grid-cols-2'>
             {
                 suggestions.map((suggestion, i) => (
-                    <div className='group relative p-[1px] rounded-lg'>
+                    <div className='group relative p-[1px] overflow-hidden rounded-lg'>
                         <div 
                             key={`prompt_${i}`}
                             className={`${theme === "light" ? 'bg-white border-[#7F7F7F20]' : 'bg-[#1F1F1F] border-[#3A3A3A]'} border rounded-lg md:w-50 h-30 p-3 text-[14px] flex flex-col justify-between ${!disabled && 'cursor-pointer'}`}

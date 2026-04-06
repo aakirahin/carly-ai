@@ -2,6 +2,19 @@ import { useEffect, useRef, useState } from 'react'
 import Body from './Body'
 import Face from './Face'
 import { useTheme } from '../theme-provider'
+import { useIsMobile } from '../../hooks/use-mobile'
+
+const LEFT_EYE_BASE = 10
+const RIGHT_EYE_BASE = 74
+const EYE_Y_BASE = 10
+
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value))
+
+const getEyePositionFromOffset = (offsetX: number, offsetY: number) => ({
+    leftEyeX: clamp(LEFT_EYE_BASE + offsetX, 2, 18),
+    rightEyeX: clamp(RIGHT_EYE_BASE + offsetX, 66, 82),
+    eyeY: clamp(EYE_Y_BASE + offsetY, 0, 20)
+})
 
 type Props = {
     cursorPos: { x: number, y: number }
@@ -15,39 +28,78 @@ const Carly = ({
     const [backgroundOffset, setBackgroundOffset] = useState({ offsetX: 0, offsetY: 0 });
     const { theme } = useTheme()
 
+        const isMobile = useIsMobile()
     useEffect(() => {
         if (!characterRef.current) return;
+            if (isMobile || !characterRef.current) return;
 
-        const characterRect = characterRef.current.getBoundingClientRect();
-        const characterCenterX = characterRect.left + characterRect.width / 2;
-        const characterCenterY = characterRect.top + characterRect.height / 2;
+            const characterRect = characterRef.current.getBoundingClientRect();
+            const characterCenterX = characterRect.left + characterRect.width / 2;
+            const characterCenterY = characterRect.top + characterRect.height / 2;
 
-        const deltaX = cursorPos.x - characterCenterX;
-        const deltaY = cursorPos.y - characterCenterY;
-        const angle = Math.atan2(deltaY, deltaX);
+            const deltaX = cursorPos.x - characterCenterX;
+            const deltaY = cursorPos.y - characterCenterY;
+            const angle = Math.atan2(deltaY, deltaX);
 
-        const maxMovementX = 15;
-        const maxMovementY = 12;
-        const distance = Math.min(Math.sqrt(deltaX * deltaX + deltaY * deltaY) / 100, 1);
+            const maxMovementX = 15;
+            const maxMovementY = 12;
+            const distance = Math.min(Math.sqrt(deltaX * deltaX + deltaY * deltaY) / 100, 1);
 
-        const offsetX = Math.cos(angle) * maxMovementX * distance;
-        const offsetY = Math.sin(angle) * maxMovementY * distance;
+            const offsetX = Math.cos(angle) * maxMovementX * distance;
+            const offsetY = Math.sin(angle) * maxMovementY * distance;
 
-        const leftEyeBase = 10;
-        const rightEyeBase = 74;
-        const eyeYBase = 10;
+            setEyePositions(getEyePositionFromOffset(offsetX, offsetY));
+            setBackgroundOffset({
+                offsetX: offsetX * 1.2,
+                offsetY: offsetY * 1.2
+            });
+        }, [cursorPos.x, cursorPos.y, isMobile]);
 
-        setEyePositions({
-            leftEyeX: Math.max(2, Math.min(18, leftEyeBase + offsetX)),
-            rightEyeX: Math.max(66, Math.min(82, rightEyeBase + offsetX)),
-            eyeY: Math.max(0, Math.min(20, eyeYBase + offsetY))
-        });
+        useEffect(() => {
+            if (!isMobile) return;
 
-        setBackgroundOffset({
-            offsetX: offsetX * 1.2,
-            offsetY: offsetY * 1.2
-        });
-    }, [cursorPos.x, cursorPos.y]);
+            let animationFrameId = 0;
+            let timeoutId = 0;
+            let currentOffsetX = 0;
+            let currentOffsetY = 0;
+            let targetOffsetX = 0;
+            let targetOffsetY = 0;
+
+            const setNextTarget = () => {
+                targetOffsetX = Math.random() * 16 - 8;
+                targetOffsetY = Math.random() * 12 - 6;
+                timeoutId = window.setTimeout(setNextTarget, 1200 + Math.random() * 1400);
+            };
+
+            const animate = () => {
+                currentOffsetX += (targetOffsetX - currentOffsetX) * 0.035;
+                currentOffsetY += (targetOffsetY - currentOffsetY) * 0.035;
+
+                setEyePositions(getEyePositionFromOffset(currentOffsetX, currentOffsetY));
+                setBackgroundOffset({
+                    offsetX: currentOffsetX * 0.45,
+                    offsetY: currentOffsetY * 0.45
+                });
+
+                animationFrameId = window.requestAnimationFrame(animate);
+            };
+
+            setNextTarget();
+            animationFrameId = window.requestAnimationFrame(animate);
+
+            return () => {
+                window.cancelAnimationFrame(animationFrameId);
+                window.clearTimeout(timeoutId);
+            };
+        }, [isMobile]);
+
+        useEffect(() => {
+            if (!characterRef.current) return;
+            if (!isMobile) return;
+
+            setEyePositions(getEyePositionFromOffset(0, 0));
+            setBackgroundOffset({ offsetX: 0, offsetY: 0 });
+        }, [isMobile]);
     
     return (
         <div className="h-[282px] w-[254px]" ref={characterRef} style={{ animation: 'float 3s ease-in-out infinite' }}>

@@ -1,4 +1,3 @@
-import React from 'react'
 import carly from '../../assets/carly.svg'
 
 type Props = {

@@ -1,4 +1,4 @@
-import type { Chat, Message } from "../utils/type";
+import type { Message } from "../utils/type";
 
 const apiKey = import.meta.env.VITE_API_KEY;
 

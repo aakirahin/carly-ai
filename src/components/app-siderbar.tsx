@@ -32,7 +32,6 @@ import carlyLogo from "../assets/logo.svg"
 import { useDebounce, useIsMobile } from "../hooks/use-mobile";
 import { getItem, removeItem, setItem, STORAGE_UPDATED_EVENT } from "../utils/localStorage";
 import { useEffect, useState } from "react";
-import { Input } from "./ui/input";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./ui/input-group";
 
 type NavItem = {
@@ -80,7 +79,7 @@ const SidebarSearch = ({ search, setSearch }: { search: string, setSearch: (sear
           placeholder="Search chats..." 
           className="pl-8" 
           value={search} 
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
         />
         <Search className="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 opacity-50 select-none" />
       </SidebarGroupContent>

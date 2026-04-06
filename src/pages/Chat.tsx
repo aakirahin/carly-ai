@@ -5,13 +5,13 @@ import UserMessage from '../components/Messages/UserMessage'
 import CarlyMessage from '../components/Messages/CarlyMessage'
 import { BotMessageSquare } from 'lucide-react'
 import { getItem, setItem } from '../utils/localStorage'
-import type { Chat, Message } from '../utils/type'
+import type { Chat as ChatType, Message } from '../utils/type'
 import { getResponse } from '../lib/chat'
 import { useIsMobile } from '../hooks/use-mobile'
 
 const Chat = () => {
     const { chatId } = useParams()
-    const chat: Chat = getItem(chatId)
+    const chat: ChatType = getItem(chatId!)
     const isMobile = useIsMobile()
 
     const [prompt, setPrompt] = useState<string>("")
@@ -27,7 +27,7 @@ const Chat = () => {
                 content: prompt
             }
         ]
-        setItem(chatId, { ...chat, messages })
+        setItem(chatId!, { ...chat, messages })
         setPrompt("")
         
         const response = await getResponse(messages) // check chat has been updated
@@ -43,7 +43,7 @@ const Chat = () => {
             ]
         }
 
-        setItem(chatId, newChat)
+        setItem(chatId!, newChat)
         setIsLoading(false)
 
         return

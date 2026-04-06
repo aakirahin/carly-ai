@@ -4,6 +4,8 @@ A lightweight chat UI built with React, TypeScript, and Vite.
 
 `carly-ai` provides a clean, local-first chat experience with a persistent sidebar, prompt suggestions, and OpenRouter-backed responses.
 
+Deployed site: https://carly-ai.netlify.app/
+
 ## Features
 
 - Create new chats from custom prompts or quick suggestions.

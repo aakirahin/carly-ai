@@ -22,11 +22,12 @@ export const startConversation = async (prompt: string) => {
   });
 
   const result = await response.json();
+  if (!response.ok) throw new Error(result.error ?? 'Failed to fetch chatbot response.');
+
   return result
 }
 
 export const getResponse = async (messages: Message[]) => {
-    debugger
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -40,5 +41,7 @@ export const getResponse = async (messages: Message[]) => {
     });
 
     const result = await response.json();
+    if (!response.ok) throw new Error(result.error ?? 'Failed to fetch chatbot response.');
+
     return result
 }

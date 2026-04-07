@@ -3,7 +3,7 @@ import { useState } from 'react'
 import PromptBar from '../components/PromptBar/PromptBar'
 import UserMessage from '../components/Messages/UserMessage'
 import CarlyMessage from '../components/Messages/CarlyMessage'
-import { BotMessageSquare } from 'lucide-react'
+import { BotMessageSquare, Frown } from 'lucide-react'
 import { getItem, setItem } from '../utils/localStorage'
 import type { Chat as ChatType, Message } from '../utils/type'
 import { getResponse } from '../lib/chat'
@@ -12,6 +12,16 @@ import { useIsMobile } from '../hooks/use-mobile'
 const Chat = () => {
     const { chatId } = useParams()
     const chat: ChatType = getItem(chatId!)
+
+    if (!chatId || !chat) {
+        return (
+            <div className='flex flex-col gap-2 justify-center items-center'>
+                <p className='text-4xl font-medium flex gap-2 items-center'>404 <Frown size={36}/></p>
+                <p className='text-2xl font-medium'>Chat not found.</p>
+            </div>
+        )
+    }
+
     const isMobile = useIsMobile()
 
     const [prompt, setPrompt] = useState<string>("")
@@ -30,7 +40,9 @@ const Chat = () => {
         setItem(chatId!, { ...chat, messages })
         setPrompt("")
         
-        const response = await getResponse(messages) // check chat has been updated
+        const response = await getResponse(messages)
+        if (!response.ok) console.error("Something went wrong.")
+        
         const newChat = {
             ...chat,
             messages: [

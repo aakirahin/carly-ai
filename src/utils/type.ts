@@ -5,8 +5,9 @@ export type Message = {
 }
 
 export type Chat = {
-  openrouter_id: string
+  id: string
   title: string
   created: Date
+  favourite?: boolean
   messages: Message[]
 }

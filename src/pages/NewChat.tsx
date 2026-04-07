@@ -84,6 +84,8 @@ const NewChat = () => {
 
         const id = generateId()
         const response = await startConversation(prompt)
+        if (!response.ok) console.error("Something went wrong.")
+
         const chat = {
             id,
             title: prompt,

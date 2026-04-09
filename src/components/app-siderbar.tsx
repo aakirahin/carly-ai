@@ -34,7 +34,6 @@ import { useEffect, useState } from "react";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./ui/input-group";
 import { ModeToggle } from "./mode-toggle";
 import { useTheme } from "./theme-provider";
-import { Link } from "react-router-dom";
 
 type NavItem = {
   id: string
@@ -153,10 +152,10 @@ const Header = ({ search, setSearch }: { search: string, setSearch: (search: str
               mainNav.map((nav, i) => (
                 <SidebarMenuItem key={`nav_${i}`} className="mt-2 mx-1">
                   <SidebarMenuButton asChild>
-                    <Link to={nav.url}>
+                    <a href={nav.url}>
                       {nav.icon}
                       <span>{nav.title}</span>
-                    </Link>
+                    </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))
@@ -216,10 +215,10 @@ const ChatGroup = ({
                     </InputGroupAddon>
                   </InputGroup> :
                   <SidebarMenuButton asChild>
-                    <Link to={chat.url} title={chat.name}>
+                    <a href={chat.url} title={chat.name}>
                       {chat.favourite && <Star className="text-sidebar-foreground/50"/>}
                       <span>{chat.name}</span>
-                    </Link>
+                    </a>
                   </SidebarMenuButton>
                 }
               {

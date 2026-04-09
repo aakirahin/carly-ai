@@ -23,16 +23,18 @@ const Chat = () => {
     }
 
     const isMobile = useIsMobile()
-
     const [prompt, setPrompt] = useState<string>("")
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const handleSubmit = async () => {
+        if (prompt === "") return
+
         setIsLoading(true)
 
         const messages: Message[] = [
             ...chat.messages, 
             {
+                id: String(Math.ceil(chat.messages.length/2)),
                 role: "user",
                 content: prompt
             }
@@ -40,33 +42,40 @@ const Chat = () => {
         setItem(chatId!, { ...chat, messages })
         setPrompt("")
         
-        const response = await getResponse(messages)
-        if (!response.ok) console.error("Something went wrong.")
-        
-        const newChat = {
-            ...chat,
-            messages: [
-                ...messages,
-                {
-                    role: "assistant",
-                    content: response.choices[0].message.content,
-                    reasoning: response.choices[0].message.reasoning
-                }
-            ]
+        try {
+            const response = await getResponse(messages)
+            
+            const newChat = {
+                ...chat,
+                messages: [
+                    ...messages,
+                    {
+                        id: response.id,
+                        role: "assistant",
+                        content: response.choices[0].message.content,
+                        reasoning: response.choices[0].message.reasoning
+                    }
+                ]
+            }
+    
+            setItem(chatId!, newChat)
+            setIsLoading(false)
+    
+            return
+        } catch (e) {
+            console.error(e)
+            return
         }
 
-        setItem(chatId!, newChat)
-        setIsLoading(false)
-
-        return
     }
 
     return (
         <div className='flex flex-col m-4 justify-end w-full md:gap-4 gap-6'>
             {
                 chat.messages.map((msg: Message) => {
-                    if (msg.role === "user") return <UserMessage content={msg.content}/>
-                    if (msg.role === "assistant") return <CarlyMessage content={msg.content}/>
+                    if (msg.role === "user") return <UserMessage key={msg.id} content={msg.content}/>
+                    if (msg.role === "assistant") return <CarlyMessage key={msg.id} content={msg.content}/>
+                    return
                 })
             }
             {

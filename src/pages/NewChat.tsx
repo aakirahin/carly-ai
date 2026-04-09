@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Carly from '../components/Carly/Carly';
 import PromptBar from '../components/PromptBar/PromptBar';
 import { BotMessageSquare, Sparkles } from 'lucide-react';
@@ -15,10 +15,22 @@ const generateId = () => {
 }
 
 const suggestions = [
-    "How many r's are there in 'strawberry'?",
-    "What's the weather like today?",
-    "Give me a healthy recipe to cook.",
-    "Recommend a movie for me to watch."
+    {
+        id: 1,
+        suggestion: "How many r's are there in 'strawberry'?",
+    },
+    {
+        id: 2,
+        suggestion: "What's the weather like today?",
+    },
+    {
+        id: 3,
+        suggestion: "Give me a healthy recipe to cook.",
+    },
+    {
+        id: 4,
+        suggestion: "Recommend a movie for me to watch.",
+    },
 ]
 
 const SuggestedPrompts = ({
@@ -32,37 +44,54 @@ const SuggestedPrompts = ({
 }) => {
     const { theme } = useTheme()
     const [activeSuggestion, setActiveSuggestion] = useState<number | null>(null)
+    const mobileGlowTimerRef = useRef<number | null>(null)
 
-    const handleSuggestionClick = (suggestion: string, index: number) => {
+    // Clean up timeout
+    useEffect(() => {
+        return () => {
+            if (mobileGlowTimerRef.current !== null) window.clearTimeout(mobileGlowTimerRef.current)
+        }
+    }, [])
+
+    const handleSuggestionClick = (suggestion: { id: number, suggestion: string }) => {
         if (disabled) return
 
         if (isMobile) {
-            setActiveSuggestion(index)
-            window.setTimeout(() => setActiveSuggestion(null), 800)
+            setActiveSuggestion(suggestion.id)
+
+            if (mobileGlowTimerRef.current !== null) {
+                window.clearTimeout(mobileGlowTimerRef.current)
+            }
+
+            // If clicked on when in mobile view, set suggested prompted as active for 1s so the border glows whilst loading
+            mobileGlowTimerRef.current = window.setTimeout(() => {
+                setActiveSuggestion(null)
+                mobileGlowTimerRef.current = null
+            }, 1000)
         }
 
-        handleSubmit(suggestion)
+        handleSubmit(suggestion.suggestion)
     }
     
     return (
         <div className='md:flex gap-2 grid grid-cols-2'>
             {
-                suggestions.map((suggestion, i) => (
+                suggestions.map((suggestion) => (
                     <div className='group relative p-[1px] overflow-hidden rounded-lg'>
                         <div 
-                            key={`prompt_${i}`}
+                            key={`prompt_${suggestion.id}`}
                             className={`${theme === "light" ? 'bg-white border-[#7F7F7F20]' : 'bg-[#1F1F1F] border-[#3A3A3A]'} border rounded-lg md:w-50 h-30 p-3 text-[14px] flex flex-col justify-between ${!disabled && 'cursor-pointer'}`}
-                            onClick={() => handleSuggestionClick(suggestion, i)}
+                            onClick={() => handleSuggestionClick(suggestion)}
                         >
                             <Sparkles 
                                 size={36} 
                                 color={"#C5B4FA"} 
                                 className={`p-2 border ${theme === "light" ? 'border-[#7F7F7F20]' : 'border-[#3A3A3A]' } rounded-full`}
                             />
-                            {suggestion}
+                            {suggestion.suggestion}
                         </div>
                         <div
-                            className={`absolute top-1/2 left-1/2 w-[200%] h-[200%] animate-spin-slow opacity-0 transition-opacity duration-300 pointer-events-none ${isMobile ? activeSuggestion === i ? 'opacity-100' : '' : 'group-hover:opacity-100'}`}
+                            className={`absolute top-1/2 left-1/2 w-[200%] h-[200%] animate-spin-slow opacity-0 transition-opacity duration-300 pointer-events-none ${isMobile ? activeSuggestion === suggestion.id ? 'opacity-100' : '' : 'group-hover:opacity-100'}`}
                             style={{ background: "conic-gradient(transparent, #C58EFF, #709DFF, transparent)", zIndex: -1 }}
                         ></div>
                     </div>
@@ -74,41 +103,48 @@ const SuggestedPrompts = ({
 
 const NewChat = () => {
     const isMobile = useIsMobile()
-
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [prompt, setPrompt] = useState<string>("")
 
     const handleSubmit = async (prompt: string) => {
+        if (prompt === "") return
+
         setIsLoading(true)
-
         const id = generateId()
-        const response = await startConversation(prompt)
-        if (!response.ok) console.error("Something went wrong.")
 
-        const chat = {
-            id,
-            title: prompt,
-            created: response.created,
-            favourite: false,
-            messages: [
-                {
-                    role: "user",
-                    content: prompt
-                },
-                {
-                    role: "assistant",
-                    content: response.choices[0].message.content,
-                    reasoning: response.choices[0].message.reasoning
-                }
-            ]
+        try {
+            const response = await startConversation(prompt)
+    
+            const chat = {
+                id,
+                title: prompt,
+                created: response.created,
+                favourite: false,
+                messages: [
+                    {
+                        id: "1",
+                        role: "user",
+                        content: prompt
+                    },
+                    {
+                        id: response.id,
+                        role: "assistant",
+                        content: response.choices[0].message.content,
+                        reasoning: response.choices[0].message.reasoning
+                    }
+                ]
+            }
+    
+            setItem(id, chat)
+            setIsLoading(false)
+            navigate(`/chat/${id}`)
+            
+            return
+        } catch (e) {
+            console.error(e)
+            return
         }
-
-        setItem(id, chat)
-        setIsLoading(false)
-        navigate(`/chat/${id}`)
-        
-        return
     }
     
     // CARLY

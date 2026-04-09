@@ -69,7 +69,7 @@ const Sparkle = ({ x, y, delay }: SparkleProps) => {
                 animation: `sparkle 1s ease-out ${delay}s infinite`
             }}
         >
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ transform: 'translate(-25%, -50%)' }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ transform: 'translate(-25%, -50%)' }}>
                 <path
                     d="M8 0L8.9 5.8L14 8L8.9 10.2L8 16L7.1 10.2L2 8L7.1 5.8L8 0Z"
                     fill="url(#sparkle-gradient)"

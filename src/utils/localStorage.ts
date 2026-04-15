@@ -1,8 +1,6 @@
 const STORAGE_UPDATED_EVENT = "storage-updated"
 
-const notifyStorageUpdated = () => {
-    window.dispatchEvent(new Event(STORAGE_UPDATED_EVENT))
-}
+const notifyStorageUpdated = () => window.dispatchEvent(new Event(STORAGE_UPDATED_EVENT))
 
 export const setItem = (key: string, value: any) => {
     try {

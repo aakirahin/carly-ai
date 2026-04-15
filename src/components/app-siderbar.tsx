@@ -273,7 +273,8 @@ export function AppSidebar() {
   const debouncedSearch = useDebounce(search, 500)
 
   const getChats = (filter: string) => {
-    const chats = Object.keys({ ...localStorage }).filter((key) => key.length === 36)
+    const chats = Object.keys({ ...localStorage })
+      .filter((key) => key.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/))
 
     if (!chats.length) return []
 

@@ -7,7 +7,7 @@ import { setItem } from '../utils/localStorage';
 import { startConversation } from '../lib/chat';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useTheme } from '../components/theme-provider';
-import { Chat } from '../utils/type';
+import type { Chat } from '../utils/type';
 
 const className = "flex flex-col items-center"
 

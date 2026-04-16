@@ -17,7 +17,7 @@ const PromptBar = ({
   const { theme } = useTheme()
 
   return (
-    <div className={`flex border rounded-full p-2 items-center w-full ${theme === "light" ? 'bg-white border-[#7F7F7F20]' : 'bg-[#1F1F1F] border-[#3A3A3A]'}`}>
+    <form className={`flex border rounded-full p-2 items-center w-full ${theme === "light" ? 'bg-white border-[#7F7F7F20]' : 'bg-[#1F1F1F] border-[#3A3A3A]'}`}>
       <input 
         type='text' 
         placeholder='Ask me anything...' 
@@ -25,6 +25,7 @@ const PromptBar = ({
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
         disabled={isLoading}
+        onSubmit={() => handleSubmit(prompt)}
       />
       <button 
         onClick={() => handleSubmit(prompt)} 
@@ -35,7 +36,7 @@ const PromptBar = ({
           disabled={isLoading || !prompt.length}
         />
       </button>
-    </div>
+    </form>
   )
 }
 

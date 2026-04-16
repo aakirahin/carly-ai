@@ -36,7 +36,7 @@ npm install
 2. Create or update `.env.local` in the project root:
 
 ```env
-VITE_API_KEY=your_openrouter_api_key_here
+API_KEY=your_openrouter_api_key_here
 ```
 
 3. Save the file.
@@ -51,7 +51,7 @@ npm run dev
 
 ## Environment Variables
 
-- `VITE_API_KEY`: Required. Used in `src/lib/chat.ts` to authorize requests to `https://openrouter.ai/api/v1/chat/completions`.
+- `API_KEY`: Required. Used in `src/lib/chat.ts` to authorize requests to `https://openrouter.ai/api/v1/chat/completions`.
 
 ## Available Scripts
 

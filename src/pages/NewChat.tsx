@@ -7,12 +7,9 @@ import { setItem } from '../utils/localStorage';
 import { startConversation } from '../lib/chat';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useTheme } from '../components/theme-provider';
+import { Chat } from '../utils/type';
 
 const className = "flex flex-col items-center"
-
-const generateId = () => {
-	return crypto.randomUUID()
-}
 
 const suggestions = [
     {
@@ -77,9 +74,11 @@ const SuggestedPrompts = ({
         <div className='md:flex gap-2 grid grid-cols-2'>
             {
                 suggestions.map((suggestion) => (
-                    <div className='group relative p-[1px] overflow-hidden rounded-lg'>
-                        <div 
-                            key={`prompt_${suggestion.id}`}
+                    <div 
+                        key={`prompt_${suggestion.id}`}
+                        className='group relative p-[1px] overflow-hidden rounded-lg'
+                    >
+                        <div
                             className={`${theme === "light" ? 'bg-white border-[#7F7F7F20]' : 'bg-[#1F1F1F] border-[#3A3A3A]'} border rounded-lg md:w-50 h-30 p-3 text-[14px] flex flex-col justify-between ${!disabled && 'cursor-pointer'}`}
                             onClick={() => handleSuggestionClick(suggestion)}
                         >
@@ -111,15 +110,15 @@ const NewChat = () => {
         if (prompt === "") return
 
         setIsLoading(true)
-        const id = generateId()
+        const id = crypto.randomUUID()
 
         try {
             const response = await startConversation(prompt)
     
-            const chat = {
+            const chat: Chat = {
                 id,
                 title: prompt,
-                created: response.created,
+                created: response?.created,
                 favourite: false,
                 messages: [
                     {
@@ -128,22 +127,20 @@ const NewChat = () => {
                         content: prompt
                     },
                     {
-                        id: response.id,
+                        id: response?.id,
                         role: "assistant",
-                        content: response.choices[0].message.content,
-                        reasoning: response.choices[0].message.reasoning
+                        content: response?.choices?.[0]?.message?.content,
+                        reasoning: response?.choices?.[0]?.message?.reasoning
                     }
                 ]
             }
     
-            setItem(id, chat)
-            setIsLoading(false)
+            setItem<Chat>(id, chat)
             navigate(`/chat/${id}`)
-            
-            return
         } catch (e) {
-            console.error(e)
-            return
+        console.error(e)
+        } finally {
+            setIsLoading(false)
         }
     }
     

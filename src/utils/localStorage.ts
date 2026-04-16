@@ -2,7 +2,7 @@ const STORAGE_UPDATED_EVENT = "storage-updated"
 
 const notifyStorageUpdated = () => window.dispatchEvent(new Event(STORAGE_UPDATED_EVENT))
 
-export const setItem = (key: string, value: any) => {
+export const setItem = <T extends Record<string, any>>(key: string, value: T) => {
     try {
         window.localStorage.setItem(key, JSON.stringify(value))
         notifyStorageUpdated()
@@ -11,7 +11,7 @@ export const setItem = (key: string, value: any) => {
     }
 }
 
-export const getItem = (key: string) => {
+export const getItem = <T extends Record<string, any>>(key: string): T | undefined => {
     try {
         const item = window.localStorage.getItem(key)
         return item ? JSON.parse(item) : undefined

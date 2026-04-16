@@ -1,3 +1,5 @@
+import { useTheme } from "../theme-provider"
+
 type Props = {
     content: string
 }
@@ -5,13 +7,15 @@ type Props = {
 const UserMessage = ({
     content
 }: Props) => {
-  return (
-    <div className='flex justify-end'>
-        <p className='px-3 py-2 bg-[#7F7F7F10] rounded-lg w-fit'>
-            {content}
-        </p>
-    </div>
-  )
+    const { theme } = useTheme()
+
+    return (
+        <div className='flex justify-end'>
+            <p className={`px-3 py-2 ${theme === "light" ? "bg-[#7F7F7F20]" : "bg-[#303030]" } rounded-lg w-fit`}>
+                {content}
+            </p>
+        </div>
+    )
 }
 
 export default UserMessage

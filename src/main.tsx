@@ -1,19 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar.tsx'
-import { AppSidebar } from './components/app-siderbar.tsx'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { AppSidebar } from './components/app-sidebar.tsx'
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
 import NewChat from './pages/NewChat.tsx'
 import NotFound from './pages/NotFound.tsx'
 import Chat from './pages/Chat.tsx'
 import './index.css'
 import { ThemeProvider, useTheme } from './components/theme-provider.tsx'
-
-const router = createBrowserRouter([
-  { path: "/", element: <NewChat/> },
-  { path: "/chat/:chatId", element: <Chat/> },
-  { path: "*", element: <NotFound/> }
-])
 
 function AppLayout() {
   const defaultOpen = window.innerWidth >= 1024
@@ -28,17 +22,28 @@ function AppLayout() {
         />
         <AppSidebar />
         <main className="flex flex-1 justify-center lg:text-[14px] text-[16px] w-full">
-          <RouterProvider router={router} />
+          <Outlet />
         </main>
       </div>
     </SidebarProvider>
   )
 }
 
+const router = createBrowserRouter([
+  {
+    element: <AppLayout />,
+    children: [
+      { path: "/", element: <NewChat/> },
+      { path: "/chat/:chatId", element: <Chat/> },
+      { path: "*", element: <NotFound/> }
+    ]
+  }
+])
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-      <AppLayout />
+      <RouterProvider router={router} />
     </ThemeProvider>
   </StrictMode>,
 )

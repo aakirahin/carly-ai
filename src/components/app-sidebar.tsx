@@ -34,6 +34,8 @@ import { useEffect, useState } from "react";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./ui/input-group";
 import { ModeToggle } from "./mode-toggle";
 import { useTheme } from "./theme-provider";
+import { Link } from "react-router-dom";
+import type { Chat } from "../utils/type";
 
 type NavItem = {
   id: string
@@ -60,7 +62,7 @@ const menuItemActions = [
     onClick: (chat: NavItem) => {
       const { id, favourite } = chat
       const chatItem = getItem(id)
-      setItem(id, { ...chatItem, favourite: !favourite })
+      setItem<Chat>(id, { ...chatItem as Chat, favourite: !favourite })
     }
   },
   { 
@@ -152,10 +154,10 @@ const Header = ({ search, setSearch }: { search: string, setSearch: (search: str
               mainNav.map((nav, i) => (
                 <SidebarMenuItem key={`nav_${i}`} className="mt-2 mx-1">
                   <SidebarMenuButton asChild>
-                    <a href={nav.url}>
+                    <Link to={nav.url}>
                       {nav.icon}
                       <span>{nav.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))
@@ -181,7 +183,7 @@ const ChatGroup = ({
 
   const handleEdit = (chatId: string) => {
     const chat = getItem(chatId)
-    setItem(chatId, { ...chat, title: edit.newTitle })
+    setItem<Chat>(chatId, { ...chat as Chat, title: edit.newTitle })
     setEdit({
       chatId: "",
       isEditing: false,
@@ -215,10 +217,10 @@ const ChatGroup = ({
                     </InputGroupAddon>
                   </InputGroup> :
                   <SidebarMenuButton asChild>
-                    <a href={chat.url} title={chat.name}>
+                    <Link to={chat.url} title={chat.name}>
                       {chat.favourite && <Star className="text-sidebar-foreground/50"/>}
                       <span>{chat.name}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 }
               {
@@ -273,20 +275,27 @@ export function AppSidebar() {
   const debouncedSearch = useDebounce(search, 500)
 
   const getChats = (filter: string) => {
-    const chats = Object.keys({ ...localStorage })
+    // Find chat IDs within localStorage
+    const chats = Object.keys(localStorage)
       .filter((key) => key.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/))
 
     if (!chats.length) return []
 
-    const allChats = chats.map((chatId) => {
-      const chat = getItem(chatId)
-      return { 
-        id: chatId,
-        name: chat.title, 
-        url: `/chat/${chatId}`,
-        favourite: chat.favourite ?? false
-      }
-    })
+    // Map through all chat IDs and get chat
+    const allChats = chats
+      .map((chatId) => {
+        const chat = getItem<Chat>(chatId)
+
+        if (!chat) return
+
+        return { 
+          id: chatId,
+          name: chat.title, 
+          url: `/chat/${chatId}`,
+          favourite: chat.favourite ?? false
+        }
+      })
+      .filter((chat) => (!!chat))
 
     return filter ? allChats.filter((chat) => chat.name.toLowerCase().includes(filter.toLowerCase())) : allChats
   }

@@ -1,12 +1,9 @@
 import type { Message } from "../utils/type";
 
-const apiKey = import.meta.env.VITE_API_KEY;
-
 export const startConversation = async (prompt: string) => {
-  let response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  let response = await fetch("/api/chat", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -28,10 +25,9 @@ export const startConversation = async (prompt: string) => {
 }
 
 export const getResponse = async (messages: Message[]) => {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${apiKey}`,
             "Content-Type": "application/json",
         },
         body: JSON.stringify({

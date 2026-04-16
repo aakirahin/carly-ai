@@ -11,35 +11,25 @@ import { useIsMobile } from '../hooks/use-mobile'
 
 const Chat = () => {
     const { chatId } = useParams()
-    const chat: ChatType = getItem(chatId!)
-
-    if (!chatId || !chat) {
-        return (
-            <div className='flex flex-col gap-2 justify-center items-center'>
-                <p className='text-4xl font-medium flex gap-2 items-center'>404 <Frown size={36}/></p>
-                <p className='text-2xl font-medium'>Chat not found.</p>
-            </div>
-        )
-    }
-
     const isMobile = useIsMobile()
     const [prompt, setPrompt] = useState<string>("")
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const chat: ChatType | undefined = getItem<ChatType>(chatId!)
 
     const handleSubmit = async () => {
-        if (prompt === "") return
+        if (!chat || prompt === "") return
 
         setIsLoading(true)
 
         const messages: Message[] = [
             ...chat.messages, 
             {
-                id: String(Math.ceil(chat.messages.length/2)),
+                id: crypto.randomUUID(),
                 role: "user",
                 content: prompt
             }
         ]
-        setItem(chatId!, { ...chat, messages })
+        setItem<ChatType>(chatId!, { ...chat, messages })
         setPrompt("")
         
         try {
@@ -50,26 +40,28 @@ const Chat = () => {
                 messages: [
                     ...messages,
                     {
-                        id: response.id,
+                        id: response?.id,
                         role: "assistant",
-                        content: response.choices[0].message.content,
-                        reasoning: response.choices[0].message.reasoning
+                        content: response?.choices?.[0]?.message?.content,
+                        reasoning: response?.choices?.[0]?.message?.reasoning
                     }
                 ]
             }
     
-            setItem(chatId!, newChat)
-            setIsLoading(false)
-    
-            return
+            setItem(chatId!, newChat)    
         } catch (e) {
             console.error(e)
-            return
+        } finally {
+            setIsLoading(false)
         }
-
     }
 
     return (
+        (!chatId || !chat) ?
+        <div className='flex flex-col gap-2 justify-center items-center'>
+            <p className='text-4xl font-medium flex gap-2 items-center'>404 <Frown size={36}/></p>
+            <p className='text-2xl font-medium'>Chat not found.</p>
+        </div> :
         <div className='flex flex-col m-4 justify-end w-full md:gap-4 gap-6'>
             {
                 chat.messages.map((msg: Message) => {

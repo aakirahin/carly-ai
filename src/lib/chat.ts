@@ -27,6 +27,5 @@ export const getResponse = async (
   const result = await response.json();
   if (!response.ok) throw new Error(result.error ?? 'Failed to fetch chatbot response.');
 
-  console.log(result)
   return result
 }

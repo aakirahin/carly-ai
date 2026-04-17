@@ -1,6 +1,10 @@
-import type { Message } from "../utils/type";
+import type { Message } from "../types/chat";
+import type { Response } from "../types/response";
 
-export const startConversation = async (prompt: string) => {
+export const getResponse = async (
+  chat: boolean,
+  messages: Message[] | string
+): Promise<Response> => {
   let response = await fetch("/api/chat", {
     method: "POST",
     headers: {
@@ -8,36 +12,21 @@ export const startConversation = async (prompt: string) => {
     },
     body: JSON.stringify({
       "model": "openrouter/free",
-      "messages": [
-        {
-          "role": "user",
-          "content": prompt
-        }
-      ],
-      "reasoning": {"enabled": true}
+      "messages": chat ? 
+        messages : 
+        [
+          {
+            "role": "user",
+            "content": messages
+          }
+        ],
+      "reasoning": { "enabled": true }
     })
   });
 
   const result = await response.json();
   if (!response.ok) throw new Error(result.error ?? 'Failed to fetch chatbot response.');
 
+  console.log(result)
   return result
-}
-
-export const getResponse = async (messages: Message[]) => {
-    const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            "model": "openrouter/free",
-            "messages": messages
-        })
-    });
-
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error ?? 'Failed to fetch chatbot response.');
-
-    return result
 }

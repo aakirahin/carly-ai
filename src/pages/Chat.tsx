@@ -1,59 +1,23 @@
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
 import PromptBar from '../components/PromptBar/PromptBar'
-import UserMessage from '../components/Messages/UserMessage'
-import CarlyMessage from '../components/Messages/CarlyMessage'
 import { BotMessageSquare, Frown } from 'lucide-react'
-import { getItem, setItem } from '../utils/localStorage'
-import type { Chat as ChatType, Message } from '../utils/type'
-import { getResponse } from '../lib/chat'
+import { getItem } from '../utils/localStorage'
 import { useIsMobile } from '../hooks/use-mobile'
+import type { Chat, Message } from '../types/chat'
+import MessageBubble from '../components/MessageBubble'
+import useSendMessage from '../hooks/useSendMessage'
 
 const Chat = () => {
     const { chatId } = useParams()
     const isMobile = useIsMobile()
     const [prompt, setPrompt] = useState<string>("")
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const chat: ChatType | undefined = getItem<ChatType>(chatId!)
+    const chat: Chat | undefined = chatId ? getItem<Chat>(chatId) : undefined
+    const { isLoading, continueChat } = useSendMessage()
 
-    const handleSubmit = async () => {
-        if (!chat || prompt === "") return
-
-        setIsLoading(true)
-
-        const messages: Message[] = [
-            ...chat.messages, 
-            {
-                id: crypto.randomUUID(),
-                role: "user",
-                content: prompt
-            }
-        ]
-        setItem<ChatType>(chatId!, { ...chat, messages })
-        setPrompt("")
-        
-        try {
-            const response = await getResponse(messages)
-            
-            const newChat = {
-                ...chat,
-                messages: [
-                    ...messages,
-                    {
-                        id: response?.id,
-                        role: "assistant",
-                        content: response?.choices?.[0]?.message?.content,
-                        reasoning: response?.choices?.[0]?.message?.reasoning
-                    }
-                ]
-            }
-    
-            setItem(chatId!, newChat)    
-        } catch (e) {
-            console.error(e)
-        } finally {
-            setIsLoading(false)
-        }
+    const handleSubmit = (prompt: string) => {
+        if (!chatId || !chat) return
+        continueChat(chatId, chat, prompt)
     }
 
     return (
@@ -65,8 +29,9 @@ const Chat = () => {
         <div className='flex flex-col m-4 justify-end w-full md:gap-4 gap-6'>
             {
                 chat.messages.map((msg: Message) => {
-                    if (msg.role === "user") return <UserMessage key={msg.id} content={msg.content}/>
-                    if (msg.role === "assistant") return <CarlyMessage key={msg.id} content={msg.content}/>
+                    if (msg.content === null) return "Something went wrong."
+                    if (msg.role === "user") return <MessageBubble key={msg.id} content={msg.content}/>
+                    if (msg.role === "assistant") return <MessageBubble key={msg.id} content={msg.content} ai/>
                     return
                 })
             }

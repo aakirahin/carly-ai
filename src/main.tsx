@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar.tsx'
-import { AppSidebar } from './components/app-sidebar.tsx'
+import { AppSidebar } from './components/Sidebar/app-sidebar.tsx'
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
 import NewChat from './pages/NewChat.tsx'
 import NotFound from './pages/NotFound.tsx'

@@ -25,41 +25,6 @@ Deployed site: https://carly-ai.netlify.app/
 - Shadcn
 - OpenRouter Chat Completions API
 
-## Getting Started
-
-1. Install dependencies:
-
-```bash
-npm install
-```
-
-2. Create or update `.env.local` in the project root:
-
-```env
-API_KEY=your_openrouter_api_key_here
-```
-
-3. Save the file.
-
-4. Start the development server:
-
-```bash
-npm run dev
-```
-
-5. Open the app at the local URL shown in the terminal (typically `http://localhost:5173`).
-
-## Environment Variables
-
-- `API_KEY`: Required. Used in `src/lib/chat.ts` to authorize requests to `https://openrouter.ai/api/v1/chat/completions`.
-
-## Available Scripts
-
-- `npm run dev`: Start Vite development server.
-- `npm run build`: Type-check and build production assets.
-- `npm run preview`: Preview the production build locally.
-- `npm run lint`: Run ESLint.
-
 ## Project Structure
 
 ```text
@@ -74,8 +39,3 @@ src/
 ## How Data Is Stored
 
 Chats are stored in browser local storage and synchronized in the sidebar using custom and browser storage events. No backend database is required for chat history.
-
-## Notes
-
-- The app currently uses the `openrouter/free` model identifier.
-- Keep your API key private and do not commit `.env` files.

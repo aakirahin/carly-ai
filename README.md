@@ -1,81 +1,87 @@
 # Carly AI
 
-A lightweight chat UI built with React, TypeScript, and Vite.
+**[Live Demo](https://carly-ai.netlify.app/)**
 
-`carly-ai` provides a clean, local-first chat experience with a persistent sidebar, prompt suggestions, and OpenRouter-backed responses.
+A local-first AI chat interface with an animated mascot, built with React, TypeScript, and Vite. Conversations are persisted in `localStorage` with real-time cross-tab synchronisation, and the app connects to OpenRouter's LLM API with chain-of-thought reasoning support.
 
-Deployed site: https://carly-ai.netlify.app/
+## Technical Highlights
 
-## Features
+**Event-driven state synchronisation** — Chat state is managed through a dual-event pattern: a custom `STORAGE_UPDATED_EVENT` dispatches within the same tab (since the native `storage` event is suppressed for the originating tab), while the native `storage` event handles cross-tab updates. This keeps the sidebar in sync without a backend or global state library.
 
-- Create new chats from custom prompts or quick suggestions.
-- Continue existing conversations at `/chat/:chatId`.
-- Persist chats in browser local storage.
-- Search chats in the sidebar.
-- Rename, favourite, and delete chats from a context menu.
-- Responsive layout with mobile-aware sidebar behavior.
+**Optimistic UI updates** — On message send, the user's message is immediately written to `localStorage` and rendered before the API response resolves, so the UI feels instant. If the request fails, the error is caught and surfaced.
+
+**Eye-tracking animation** — The Carly mascot's eyes follow the cursor on desktop using trigonometric angle calculation (`Math.atan2`) with clamped pixel offsets per eye. On mobile, an autonomous animation uses exponential lerp (`offset += (target - offset) * 0.035`) with randomised intervals to simulate natural blinking.
+
+**Reasoning token support** — The OpenRouter integration requests chain-of-thought reasoning (`{ "enabled": true }`), and the response types store `reasoning` and `reasoning_details` arrays alongside message content, supporting future display of step-by-step model reasoning.
+
+**Full conversation history** — Each chat stores its complete message array; `continueChat` passes the full history to the API on every turn, preserving context across a session.
+
+## Architecture
+
+```
+src/
+  components/      # Sidebar, message bubbles, prompt bar, Carly avatar/eyes
+  hooks/
+    useGetChats      # Scans localStorage by UUID key pattern, syncs on storage events
+    useSendMessage   # Handles startChat (new UUID, store, navigate) and continueChat (append + API)
+    useEyeTracking   # Cursor tracking + mobile autonomous animation
+    use-mobile       # Media query listener + debounce utility
+  lib/
+    chat.ts          # OpenRouter API client (getResponse)
+  pages/             # NewChat (landing), Chat (active conversation), NotFound
+  utils/
+    localStorage.ts  # Wrapped get/set/remove with custom event dispatch
+```
+
+**Data flow:**
+```
+User input
+  → useSendMessage
+  → localStorage.setItem + notifyStorageUpdated()
+  → useGetChats listener re-fetches sidebar
+  → navigate to /chat/:id
+```
 
 ## Tech Stack
 
-- React
-- TypeScript
-- Vite
-- React Router
-- Tailwind CSS
-- Shadcn
-- OpenRouter Chat Completions API
+- **React 19** + TypeScript
+- **Vite** — build tooling
+- **React Router** — client-side routing
+- **Tailwind CSS** + **shadcn/ui** — styling and components
+- **OpenRouter API** — LLM backend (chat completions with reasoning)
 
 ## Getting Started
-
-1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-2. Create or update `.env.local` in the project root:
+Create `.env.local`:
 
 ```env
 API_KEY=your_openrouter_api_key_here
 ```
 
-3. Save the file.
-
-4. Start the development server:
-
 ```bash
 npm run dev
+# → http://localhost:5173
 ```
-
-5. Open the app at the local URL shown in the terminal (typically `http://localhost:5173`).
 
 ## Environment Variables
 
-- `API_KEY`: Required. Used in `src/lib/chat.ts` to authorize requests to `https://openrouter.ai/api/v1/chat/completions`.
+| Variable | Required | Description |
+|---|---|---|
+| `API_KEY` | Yes | OpenRouter API key, used in `src/lib/chat.ts` |
 
 ## Available Scripts
 
-- `npm run dev`: Start Vite development server.
-- `npm run build`: Type-check and build production assets.
-- `npm run preview`: Preview the production build locally.
-- `npm run lint`: Run ESLint.
-
-## Project Structure
-
-```text
-src/
-  components/      # UI components (sidebar, messages, prompt bar, Carly avatar)
-  hooks/           # Reusable hooks (mobile detection, debounce)
-  lib/             # API integration (OpenRouter chat calls)
-  pages/           # Route pages (new chat, chat, 404)
-  utils/           # localStorage utilities, shared types, helpers
+```bash
+npm run dev      # Start Vite dev server
+npm run build    # Type-check + build
+npm run preview  # Preview production build
+npm run lint     # Run ESLint
 ```
 
-## How Data Is Stored
+## Data Persistence
 
-Chats are stored in browser local storage and synchronized in the sidebar using custom and browser storage events. No backend database is required for chat history.
-
-## Notes
-
-- The app currently uses the `openrouter/free` model identifier.
-- Keep your API key private and do not commit `.env` files.
+All chats are stored in `localStorage`, keyed by UUID. There is no backend — the app is fully client-side. `localStorage` keys are distinguished from other entries using a UUID regex pattern in `useGetChats`.

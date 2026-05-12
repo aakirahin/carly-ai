@@ -1,4 +1,4 @@
-# Carly AI
+ Carly AI
 
 **[Live Demo](https://carly-ai.netlify.app/)**
 
@@ -6,11 +6,11 @@ A local-first AI chat interface with an animated mascot, built with React, TypeS
 
 ## Technical Highlights
 
-**Event-driven state synchronisation** — Chat state is managed through a dual-event pattern: a custom `STORAGE_UPDATED_EVENT` dispatches within the same tab (since the native `storage` event is suppressed for the originating tab), while the native `storage` event handles cross-tab updates. This keeps the sidebar in sync without a backend or global state library.
+**Event-driven state synchronisation** — Chat state is managed through a dual-event pattern: a custom `STORAGE_UPDATED_EVENT` dispatches within the same tab, while the native `storage` event handles cross-tab updates. This keeps the sidebar in sync without a backend or global state library.
 
 **Optimistic UI updates** — On message send, the user's message is immediately written to `localStorage` and rendered before the API response resolves, so the UI feels instant. If the request fails, the error is caught and surfaced.
 
-**Eye-tracking animation** — The Carly mascot's eyes follow the cursor on desktop using trigonometric angle calculation (`Math.atan2`) with clamped pixel offsets per eye. On mobile, an autonomous animation uses exponential lerp (`offset += (target - offset) * 0.035`) with randomised intervals to simulate natural blinking.
+**Eye-tracking animation** — The Carly mascot's eyes follow the cursor on desktop. On mobile, the eyes animate autonomously with randomised intervals to simulate natural blinking.
 
 **Reasoning token support** — The OpenRouter integration requests chain-of-thought reasoning (`{ "enabled": true }`), and the response types store `reasoning` and `reasoning_details` arrays alongside message content, supporting future display of step-by-step model reasoning.
 

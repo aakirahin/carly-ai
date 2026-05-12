@@ -8,7 +8,7 @@ A local-first AI chat interface with an animated mascot, built with React, TypeS
 
 **Event-driven state synchronisation** — Chat state is managed through a dual-event pattern: a custom `STORAGE_UPDATED_EVENT` dispatches within the same tab, while the native `storage` event handles cross-tab updates. This keeps the sidebar in sync without a backend or global state library.
 
-**Optimistic UI update on continuation** — When continuing an existing chat, the user's message is immediately written to `localStorage` and rendered before the API response resolves. Starting a new chat (`startChat`) is not optimistic — it awaits the full response before storing the chat and navigating, since there is no existing conversation to render into.
+**Optimistic UI update on continuation** — When continuing an existing chat, the user's message is immediately written to `localStorage` and rendered before the API response resolves.
 
 **Eye-tracking animation** — The Carly mascot's eyes follow the cursor on desktop. On mobile, the eyes animate autonomously with randomised intervals to simulate natural blinking.
 
